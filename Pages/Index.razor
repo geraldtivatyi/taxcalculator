@@ -1,0 +1,240 @@
+﻿@page "/"
+@using System.Globalization;
+
+<h1>Hello, world!</h1>
+
+Welcome to a South African Personal Income Tax calculator
+
+<br />
+<hr />
+
+<h3>Income Tax Calculator</h3>
+<br />
+
+<h6><b>2024 tax year</b></h6>
+<h6><b>(1 March 2023 - 29 Feb 2024)</b></h6>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <h4>Earnings</h4>
+        <div class="form-group" style="padding:5px;">
+            <label for="age">Age:</label>
+            <input type="number" id="age" @bind="Age" class="form-control" />
+        </div>
+        <div class="form-group" style="padding:5px;">
+            <label for="monthlySalary">Monthly Salary (before tax):</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">R</span>
+                </div>
+                <input type="number" id="monthlySalary" @bind="MonthlySalary" class="form-control" placeholder="0" />
+            </div>
+        </div>
+        <div class="form-group" style="padding:5px;">
+            <label for="travelAllowance">Travel Allowance:</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">R</span>
+                </div>
+                <input type="number" id="travelAllowance" @bind="TravelAllowance" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group" style="padding:5px;">
+            <label for="otherAllowances">Other Allowances:</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">R</span>
+                </div>
+                <input type="number" id="otherAllowances" @bind="OtherAllowances" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group" style="padding:5px;">
+            <label for="annualBonus">Annual Bonus:</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">R</span>
+                </div>
+                <input type="number" id="annualBonus" @bind="AnnualBonus" class="form-control" />
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <h4>Contributions</h4>
+        @* <div class="form-group" style="padding:5px;">
+            <label for="uifContribution">UIF Contribution:</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">R</span>
+                </div>
+                <input type="number" id="uifContribution" @bind="UifContribution" class="form-control" />
+            </div>
+        </div>
+        <br /> *@
+        <label for="medicalAid"><b>Medical Aid:</b></label>
+        <div style="padding:10px;border:solid;border-radius:5px;border-width:thin;">
+            <div class="form-group" style="padding:5px;">
+                <label for="numberOfDependants">Number Of Dependants (including yourself):</label>
+                <input type="number" id="numberOfDependants" @bind="NumberOfDependants" class="form-control" />
+            </div>
+            <div class="form-group" style="padding:5px;">
+                <label for="myMedicalAidContribution">My Contribution:</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">R</span>
+                    </div>
+                    <input type="number" id="myMedicalAidContribution" @bind="MedicalAidMyContribution" class="form-control" />
+                </div>
+            </div>
+            <div class="form-group" style="padding:5px;">
+                <label for="companyMedicalAidContribustion">Company Contribution:</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">R</span>
+                    </div>
+                    <input type="number" id="companyMedicalAidContribustion" @bind="MedicalAidCompanyContribution" class="form-control" />
+                </div>
+            </div>
+        </div>
+        @* <div class="form-group">
+            <label for="pensionFund">Pension Fund:</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">R</span>
+                </div>
+                <input type="number" id="pensionFund" @bind="PensionFund" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="retirementAnnuity">Retirement Annuity:</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">R</span>
+                </div>
+                <input type="number" id="retirementAnnuity" @bind="RetirementAnnuity" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="providentFund">Provident Fund:</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">R</span>
+                </div>
+                <input type="number" id="providentFund" @bind="ProvidentFund" class="form-control" />
+            </div>
+        </div> *@
+    </div>
+</div>
+<br />
+<button @onclick="CalculateTax" class="btn btn-primary">Calculate Tax</button>
+<br />
+<hr />
+
+<!-- Display tax results here -->
+@if (TaxCalculated)
+{
+    <div>
+        <h4>Tax Results</h4>
+        <br />
+        <p>Monthly Tax: <strong>R</strong><strong>@MonthlyTaxStr</strong></p>
+        <p>Take-Home Pay: <strong>R</strong><strong>@TakeHomePayStr</strong></p>
+    </div>
+}
+
+@code {
+    private decimal MonthlySalary { get; set; }
+    private decimal UifContribution { get; set; }
+    private int NumberOfDependants { get; set; }
+    private decimal MedicalAidMyContribution { get; set; }
+    private decimal MedicalAidCompanyContribution { get; set; }
+    private decimal PensionFund { get; set; }
+    private decimal RetirementAnnuity { get; set; }
+    private decimal ProvidentFund { get; set; }
+    private decimal MonthlyTax { get; set; }
+    private string MonthlyTaxStr { get; set; }
+    private decimal TakeHomePay { get; set; }
+    private string TakeHomePayStr { get; set; }
+    private bool TaxCalculated { get; set; }
+    private int Age { get; set; }
+    private decimal TravelAllowance { get; set; }
+    private decimal OtherAllowances { get; set; }
+    private decimal AnnualBonus { get; set; }
+
+    private void CalculateTax()
+    {
+        // Implement your tax calculation logic here
+        // Gross income(i.e.total receipts and accruals less receipts and accruals of a capital nature)
+        decimal grossIncome = (this.MonthlySalary*12) + this.AnnualBonus + this.TravelAllowance + this.OtherAllowances;
+
+        // Less: Exempt income
+
+        // Less: Deductions and allowances
+        // UIF is calculated as 1% of gross income with a max of 177.12 if you earn more than 17712
+        decimal uif = (grossIncome/12) * 0.01m;
+        if (uif > 177.12m)
+        {
+            uif = 177.12m;
+        }
+
+        // medical aid credit is calculated as 364 per month for the main member and 364 per month for the first dependent. For each additional dependent, 246 per month is added
+        if (this.NumberOfDependants == 1)
+        {
+            this.MedicalAidMyContribution = 364;
+        }
+        else if (this.NumberOfDependants == 2)
+        {
+            this.MedicalAidMyContribution = 364 + 364;
+        }
+        else if (this.NumberOfDependants > 2)
+        {
+            this.MedicalAidMyContribution = 364 + 364 + (this.NumberOfDependants - 1) * 246;
+        }
+        this.MedicalAidCompanyContribution = 0;
+        decimal medicalAidCredit = this.MedicalAidMyContribution + this.MedicalAidCompanyContribution;
+
+        // Add: Taxable capital gains(40 % of the sum of realised gains, less capital losses and annual exclusion)
+
+        // Equals: Taxable income
+
+        // Multiply: Tax rate according to the tax bracket
+
+        // Less: Rebates
+
+        // Equals: Tax payable
+
+        // Example: Calculate tax based on earnings and contributions
+        // You can use official tax tables or formulas provided by SARS
+        var taxBracket = taxBrackets.FirstOrDefault(t => grossIncome >= t.LowerLimit && grossIncome <= t.UpperLimit);
+        decimal tax = 0;
+        if (taxBracket != null)
+        {
+            CultureInfo usCulture = new CultureInfo("en-US");
+            this.MonthlyTax = (((taxBracket.Accumulated + ((grossIncome - taxBracket.LowerLimit) * taxBracket.Rate))) / 12);
+            this.MonthlyTaxStr = Math.Round(this.MonthlyTax, 0).ToString("N2", CultureInfo.InvariantCulture);
+
+            this.TakeHomePay = this.MonthlySalary - this.MonthlyTax - uif + medicalAidCredit;
+            this.TakeHomePayStr = Math.Round(this.TakeHomePay, 0).ToString("N2", CultureInfo.InvariantCulture);
+        }
+
+        TaxCalculated = true;
+    }
+
+    public class TaxBracket
+    {
+        public int Id { get; set; }
+        public decimal LowerLimit { get; set; }
+        public decimal UpperLimit { get; set; }
+        public decimal Accumulated { get; set; }
+        public decimal Rate { get; set; }
+    }
+
+    List<TaxBracket> taxBrackets = new List<TaxBracket>
+    {
+        new TaxBracket { Id=1, LowerLimit = 0, UpperLimit = 237100, Accumulated=0, Rate = 0.18m },
+        new TaxBracket { Id=2, LowerLimit = 237101, UpperLimit = 370500, Accumulated=42678, Rate = 0.26m },
+        new TaxBracket { Id=3, LowerLimit = 370501, UpperLimit = 512800, Accumulated=77362, Rate = 0.31m },
+        new TaxBracket { Id=4, LowerLimit = 512801, UpperLimit = 673000, Accumulated=121475, Rate = 0.36m },
+        new TaxBracket { Id=5, LowerLimit = 673001, UpperLimit = 857900, Accumulated=179147, Rate = 0.39m },
+        new TaxBracket { Id=6, LowerLimit = 857901, UpperLimit = 1817000, Accumulated=251258, Rate = 0.41m },
+        new TaxBracket { Id=7, LowerLimit = 1817001, UpperLimit = decimal.MaxValue, Accumulated=644489, Rate = 0.45m }
+    };
+}
